@@ -1,25 +1,64 @@
-import logo from './logo.svg';
-import './App.css';
+import React, {useEffect, useState } from 'react';
+import PokemonList from './Components/PokemonList';
+import axios from 'axios';
+import Pagination from './Components/Pagination';
+
 
 function App() {
+  const [pokemon, setPokemon] = useState([]);
+  const [currentPageUrl, setCurrentPageUrl] = useState("https://pokeapi.co/api/v2/pokemon");
+  const [nextPageUrl, setNextPageUrl] = useState();
+  const [prevPageUrl, setPrevPageUrl] = useState();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    let cancel;
+
+    axios.get(currentPageUrl, { cancelToken: new axios.CancelToken(c => cancel = c) })
+      .then(res => {
+        setLoading(false);
+        setNextPageUrl(res.data.next);
+        setPrevPageUrl(res.data.previous);
+        setPokemon(res.data.results.map(p => {
+          const id = p.url.split("/")[6]; 
+          return {
+            name: p.name,
+            imageUrl: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`,
+            detailsUrl: `https://pokeapi.co/api/v2/pokemon/${p.name}`
+          };
+        }));
+      })
+      .catch(error => {
+        console.error('Error fetching Pokemon data:', error);
+        setLoading(false);
+      });
+
+    return () => cancel();
+  }, [currentPageUrl]);
+
+  function goToNextPage() {
+    setCurrentPageUrl(nextPageUrl);
+  }
+
+  function goToPrevPage() {
+    setCurrentPageUrl(prevPageUrl);
+  }
+
+  if (loading) return "Loading...";
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <PokemonList pokemonList ={pokemon} />
+      <Pagination
+        goToNextPage={nextPageUrl ? goToNextPage : null}
+        goToPrevPage={prevPageUrl ? goToPrevPage : null}
+      />
+    </>
   );
+}
+export const currentPageUrl = ()=>{
+  return currentPageUrl
 }
 
 export default App;

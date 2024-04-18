@@ -1,0 +1,31 @@
+.detailed-info {
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f0f0;
+    padding: 8px; 
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    max-width: 100%;
+    overflow: hidden;
+    font-size: 12px; 
+  }
+  
+  .detailed-info p {
+    margin: 0;
+    font-size: 12px; 
+  }
+  
+  .detailed-info h3 {
+    margin-top: 10px; 
+    font-size: 14px; 
+  }
+  
+  .detailed-info ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .detailed-info li {
+    margin-bottom: 2px; 
+    font-size: 12px; 
+  }
+  
